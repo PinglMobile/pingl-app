@@ -10,9 +10,10 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
+  size: number;
   color: string;
 }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  return <FontAwesome style={{ marginBottom: -10, paddingBottom: 5, }} {...props} />;
 }
 
 export default function TabLayout() {
@@ -21,7 +22,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: "#FF7366",//Colors[colorScheme ?? 'light'].tint,
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
@@ -29,8 +30,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Home',
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} size={23}/>,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -50,8 +51,29 @@ export default function TabLayout() {
       <Tabs.Screen
         name="two"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Pings',
+          tabBarIcon: ({ color }) => <TabBarIcon name="heart" color={color} size={19}/>,
+        }}
+      />
+       <Tabs.Screen
+        name="three"
+        options={{
+          title: 'Events',
+          tabBarIcon: ({ color }) => <TabBarIcon name="map" color={color} size={17} />,
+        }}
+      />
+       <Tabs.Screen
+        name="four"
+        options={{
+          title: 'Messages',
+          tabBarIcon: ({ color }) => <TabBarIcon name="comments" color={color} size={23} />,
+        }}
+      />
+       <Tabs.Screen
+        name="five"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} size={21} />,
         }}
       />
     </Tabs>

@@ -7,7 +7,9 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import Mapbox from "@rnmapbox/maps";
 
+Mapbox.setAccessToken("<YOUR_ACCESSTOKEN>");
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -33,6 +35,7 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
+    // change this to finish loading after 4 seconds
     if (loaded) {
       SplashScreen.hideAsync();
     }
