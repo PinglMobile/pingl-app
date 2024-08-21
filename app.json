@@ -14,7 +14,9 @@
     },
     "ios": {
       "supportsTablet": true,
+      "usesAppleSignIn": true,
       "bundleIdentifier": "com.kdlkly.pinglapp",
+
       "config": {
         "googleMapsApiKey": "AIzaSyCkhK_7Z9DY_zL6ZFbPAiPsC4csDLweRTg"
       }
@@ -33,10 +35,26 @@
     },
     "plugins": [
       "expo-router",
+      ["expo-apple-authentication"],
+      [
+        "expo-asset",
+
+        {
+          "assets": ["./assets/images/pingl-signin.jpg"]
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.417607520388-jqahliropjgfnqutc8jvv3a208pvoqdb"
+        }
+      ],
       [
         "@rnmapbox/maps",
+
         {
-          "RNMapboxMapsDownloadToken": "sk.eyJ1Ijoia2Rsa2x5MDEiLCJhIjoiY2x6dDF0a3pqMjhiZjJrcHhpOTMxZTRhMyJ9.UuuSwVPatZNevB3POFyZPg"
+          "RNMapboxMapsVersion": "11.0.0",
+          "RNMapboxMapsDownloadToken": "sk.eyJ1Ijoia2Rsa2x5MDEiLCJhIjoiY2x6dWRuMnYzMDBvNTJ3cHhneng0NHM1OSJ9.7RWoojdaeVWirDFsvEHHag"
         }
       ]
     ],
