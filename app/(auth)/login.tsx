@@ -1,14 +1,79 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Image, ImageBackground } from "expo-image";
+import React from "react";
+import { View, ImageBackground, StyleSheet, Text } from "react-native";
 import * as AppleAuthentication from "expo-apple-authentication";
 import {
   GoogleSignin,
-  GoogleSigninButton,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import { supabase } from "../../lib/supabase";
+import { Link } from "expo-router";
+import AuthButton from "@/components/AuthButton";
+import PhoneButton from "@/components/PhoneButton";
 
 export default function LoginPage() {
+  const handleGoogleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      if (userInfo.idToken) {
+        const { data, error } = await supabase.auth.signInWithIdToken({
+          provider: "google",
+          token: userInfo.idToken,
+        });
+        console.log(error, data);
+      } else {
+        throw new Error("No ID token present!");
+      }
+    } catch (error: any) {
+      switch (error.code) {
+        case statusCodes.SIGN_IN_CANCELLED:
+          // User cancelled the login flow
+          break;
+        case statusCodes.IN_PROGRESS:
+          // Operation in progress already
+          break;
+        case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+          // Play services not available or outdated
+          break;
+        default:
+          // Some other error happened
+          break;
+      }
+    }
+  };
+
+  const handleAppleSignIn = async () => {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      if (credential.identityToken) {
+        const {
+          error,
+          data: { user },
+        } = await supabase.auth.signInWithIdToken({
+          provider: "apple",
+          token: credential.identityToken,
+        });
+        console.log(JSON.stringify({ error, user }, null, 2));
+        if (!error) {
+          // User is signed in
+        }
+      } else {
+        throw new Error("No identityToken.");
+      }
+    } catch (e) {
+      if (e.code === "ERR_REQUEST_CANCELED") {
+        // User canceled the sign-in flow
+      } else {
+        // Handle other errors
+      }
+    }
+  };
+
   return (
     <ImageBackground
       style={styles.image}
@@ -23,102 +88,45 @@ export default function LoginPage() {
       </View>
       <View style={styles.buttonContainer}>
         <Text style={styles.buttonContainerText}>
-          By tapping ‘Sign in/ Create account'. you agree to our terms of
+          By tapping ‘Sign in/ Create account’, you agree to our terms of
           service. Learn how we process your data in our Privacy Policy and
-          cookies policy
+          cookies policy.
         </Text>
-        <TouchableOpacity
-          style={styles.googleButton}
-          onPress={async () => {
-            try {
-              await GoogleSignin.hasPlayServices();
-              const userInfo = await GoogleSignin.signIn();
-              if (userInfo.idToken) {
-                const { data, error } = await supabase.auth.signInWithIdToken({
-                  provider: "google",
-                  token: userInfo.idToken,
-                });
-                console.log(error, data);
-              } else {
-                throw new Error("no ID token present!");
-              }
-            } catch (error: any) {
-              if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                // user cancelled the login flow
-              } else if (error.code === statusCodes.IN_PROGRESS) {
-                // operation (e.g. sign in) is in progress already
-              } else if (
-                error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE
-              ) {
-                // play services not available or outdated
-              } else {
-                // some other error happened
-              }
-            }
-          }}
-          //disabled={!request}
-        >
-          <Image
-            source={require("../../assets/icons/google.png")}
-            style={styles.googleIcon}
-          />
-          <Text style={styles.googleButtonText}>Continue with Google</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.appleButton}
-          onPress={async () => {
-            try {
-              const credential = await AppleAuthentication.signInAsync({
-                requestedScopes: [
-                  AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-                  AppleAuthentication.AppleAuthenticationScope.EMAIL,
-                ],
-              });
-              // Sign in via Supabase Auth.
-              if (credential.identityToken) {
-                const {
-                  error,
-                  data: { user },
-                } = await supabase.auth.signInWithIdToken({
-                  provider: "apple",
-                  token: credential.identityToken,
-                });
-                console.log(JSON.stringify({ error, user }, null, 2));
-                if (!error) {
-                  // User is signed in.
-                }
-              } else {
-                throw new Error("No identityToken.");
-              }
-            } catch (e) {
-              if (e.code === "ERR_REQUEST_CANCELED") {
-                // handle that the user canceled the sign-in flow
-              } else {
-                // handle other errors
-              }
-            }
-          }}
-        >
-          <Image
-            source={require("../../assets/icons/apple.png")}
-            style={styles.appleIcon}
-          />
-          <Text style={styles.googleButtonText}>Continue with Apple</Text>
-        </TouchableOpacity>
+        <AuthButton
+          text="Continue with Google"
+          icon={require("../../assets/icons/google.png")}
+          onPress={handleGoogleSignIn}
+        />
+        <AuthButton
+          text="Continue with Apple"
+          icon={require("../../assets/icons/apple.png")}
+          onPress={handleAppleSignIn}
+        />
+        <Link href="../(setup)/phone-number" asChild>
+          <PhoneButton text="Continue with Phone Number" onPress={() => {}} />
+        </Link>
       </View>
     </ImageBackground>
   );
 }
 
-LoginPage.options = {
-  headerShown: false,
-};
-
 const styles = StyleSheet.create({
-  pinglText: {
+  image: {
+    flex: 1,
+    resizeMode: "cover",
+    alignItems: "center",
+  },
+  buttonContainer: {
+    padding: 30,
+    top: 440,
+  },
+  buttonContainerText: {
     color: "white",
-    fontSize: 42,
-    fontFamily: "poppins",
+    lineHeight: 20,
+    textAlign: "center",
+    fontWeight: "bold",
+    marginBottom: 10,
+    fontFamily: "Roboto-Regular",
   },
   logo: {
     height: 80,
@@ -132,86 +140,5 @@ const styles = StyleSheet.create({
     top: 10,
     color: "white",
     fontWeight: "bold",
-  },
-  buttonContainer: {
-    padding: 30,
-    top: 500,
-  },
-  buttonContainerText: {
-    color: "white",
-    lineHeight: 20,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  image: {
-    flex: 1,
-    resizeMode: "cover",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 600,
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  googleButton: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-
-    backgroundColor: "#FFFFFF", // White background as shown in the design
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 30, // Rounded corners to match the design
-    borderWidth: 1,
-    borderColor: "#E0E0E0", // Light gray border to match the design
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3, // Add shadow for iOS
-    marginTop: 20,
-  },
-  googleIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 12,
-  },
-  googleButtonText: {
-    color: "black", // Google's brand color for the text
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  appleButton: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    backgroundColor: "#FFFFFF", // White background as shown in the design
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 30, // Rounded corners to match the design
-    borderWidth: 1,
-    borderColor: "#E0E0E0", // Light gray border to match the design
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3, // Add shadow for iOS
-    marginTop: 13,
-  },
-
-  appleIcon: {
-    width: 22,
-    height: 24,
-    marginRight: 12,
   },
 });
