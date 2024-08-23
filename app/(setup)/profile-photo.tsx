@@ -71,7 +71,7 @@ export default function PhotoUploadPage() {
           ))}
         </View>
       </View>
-      <Link href="./hobbies" asChild>
+      <Link href="./customize-feed" asChild>
         <Pressable style={styles.continueButton} onPress={handleContinue}>
           <Text style={styles.continueButtonText}>Continue</Text>
         </Pressable>

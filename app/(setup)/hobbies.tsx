@@ -5,8 +5,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Pressable,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { Link } from "expo-router";
 
 export default function HobbiesInterestsPage() {
   const [selectedHobbies, setSelectedHobbies] = useState([]);
@@ -267,16 +269,9 @@ export default function HobbiesInterestsPage() {
         })}
       </ScrollView>
 
-      <TouchableOpacity
-        style={[
-          styles.continueButton,
-          selectedHobbies.length !== 5 && styles.disabledButton,
-        ]}
-        onPress={handleContinue}
-        disabled={selectedHobbies.length !== 5}
-      >
+      <Link href="./customize-feed" asChild>
         <Text style={styles.continueButtonText}>Continue</Text>
-      </TouchableOpacity>
+      </Link>
     </View>
   );
 }
@@ -375,7 +370,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "80%",
     alignSelf: "center",
-    marginVertical: 20,
   },
   disabledButton: {
     backgroundColor: "#FFB8A4",

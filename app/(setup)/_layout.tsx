@@ -6,7 +6,7 @@ export default function SetupLayout() {
   const segments = useSegments();
 
   // Assuming you have 5 setup steps
-  const steps = 8;
+  const steps = 9;
 
   // Mapping segments to steps
   const stepMapping = {
@@ -17,7 +17,8 @@ export default function SetupLayout() {
     gender: 5,
     "gender-preference": 6,
     "profile-photo": 7,
-    hobbies: 8,
+    "customize-feed": 8,
+    preferences: 9,
   };
 
   // Determine current step based on the current route segment
