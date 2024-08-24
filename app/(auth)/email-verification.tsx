@@ -7,12 +7,17 @@ import {
   Pressable,
   TouchableOpacity,
   Keyboard,
+  Alert,
 } from "react-native";
-import Icon from "@expo/vector-icons/FontAwesome";
-import { Link } from "expo-router";
+import Icon from "@expo/vector-icons/MaterialIcons";
+import { useRouter, useSearchParams } from "expo-router";
+import { supabase } from "@/lib/supabase";
 
-export default function PhoneNumberVerificationPage() {
+export default function EmailVerificationPage() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter();
+  //const { email } = useSearchParams(); // Get the email passed as a parameter
 
   const handleChange = (text, index) => {
     let newCode = [...code];
@@ -43,24 +48,47 @@ export default function PhoneNumberVerificationPage() {
 
   const refs = [];
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const verificationCode = code.join("");
     console.log("Verification code entered:", verificationCode);
-    // Handle verification logic here
+    /*
+    const { error } = await supabase.auth.verifyOtp({
+      email: email, // Use the passed email for verification
+      token: verificationCode,
+    });
+
+    if (error) {
+      console.error("OTP verification failed:", error.message);
+      setErrorMessage("Invalid verification code. Please try again.");
+    } else {
+      console.log("OTP verified successfully");
+      router.push("../(setup)/create-account");
+    }
+    */
+
+    router.push("../(setup)/create-account");
   };
 
-  const handleResend = () => {
-    console.log("Resend code");
-    // Handle resend logic here
+  const handleResend = async () => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email: "email", // Use the passed email to resend OTP
+    });
+
+    if (error) {
+      console.error("Error resending OTP:", error.message);
+      // Alert.alert("Error", "Failed to resend the code. Please try again.");
+    } else {
+      //Alert.alert("Success", "Verification code resent successfully.");
+    }
   };
 
   return (
-    <Pressable onPress={Keyboard.dismiss} style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.contentContainer}>
-        <Icon name="shield" size={50} color="#FF7366" style={styles.icon} />
+        <Icon name="email" size={50} color="#FF7366" style={styles.icon} />
         <Text style={styles.headerText}>Enter the verification code</Text>
         <Text style={styles.subText}>
-          We've sent a verification code to your phone number.
+          We've sent a verification code to {"email"}.
         </Text>
         <View style={styles.codeInputContainer}>
           {code.map((digit, index) => (
@@ -78,16 +106,17 @@ export default function PhoneNumberVerificationPage() {
             />
           ))}
         </View>
+        {errorMessage ? (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        ) : null}
         <TouchableOpacity onPress={handleResend}>
           <Text style={styles.resendText}>Resend Code</Text>
         </TouchableOpacity>
       </View>
-      <Link href="./name" asChild>
-        <Pressable style={styles.verifyButton} onPress={handleVerify}>
-          <Text style={styles.verifyButtonText}>Verify</Text>
-        </Pressable>
-      </Link>
-    </Pressable>
+      <Pressable style={styles.verifyButton} onPress={handleVerify}>
+        <Text style={styles.verifyButtonText}>Verify</Text>
+      </Pressable>
+    </View>
   );
 }
 
@@ -98,11 +127,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 40,
-    marginTop: -20,
   },
   contentContainer: {
     alignItems: "center",
     padding: 10,
+    marginTop: 80,
   },
   icon: {
     marginBottom: 20,
@@ -157,5 +186,10 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  errorText: {
+    color: "#FF7366", // Accent color for error message
+    fontSize: 14,
+    marginTop: 10,
   },
 });

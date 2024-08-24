@@ -191,7 +191,7 @@ export default function HobbiesInterestsPage() {
 
   const handleContinue = () => {
     if (selectedHobbies.length < 5) {
-      alert("Please select exactly 5 hobbies or interests.");
+      // alert("Please select exactly 5 hobbies or interests.");
     } else {
       console.log("Selected Hobbies:", selectedHobbies);
       // Handle submission logic here
