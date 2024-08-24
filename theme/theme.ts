@@ -15,6 +15,7 @@ export const lightTheme = {
         },
         Roboto: {},
         Inter: {},
+        test: {}
     },
   };
 
