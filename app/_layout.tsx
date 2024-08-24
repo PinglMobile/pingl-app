@@ -1,13 +1,9 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { createContext, useEffect } from "react";
 import "react-native-reanimated";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
@@ -16,6 +12,8 @@ import Mapbox from "@rnmapbox/maps";
 
 import { TamaguiProvider, View } from "tamagui";
 import config from "../tamagui.config"; // your configuration
+import { lightTheme, darkTheme } from "@/theme/theme";
+import { ThemeProvider, useTheme } from "@/theme/ThemeProvider";
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -76,14 +74,19 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
+// Create a context for theme management
+
+const { theme } = useTheme();
+const router = useRouter();
+
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <TamaguiProvider config={config}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider>
+      <NavigationThemeProvider value={theme}>
         <Stack screenOptions={{ headerShown: false }} />
-      </ThemeProvider>
-    </TamaguiProvider>
+      </NavigationThemeProvider>
+    </ThemeProvider>
   );
 }
