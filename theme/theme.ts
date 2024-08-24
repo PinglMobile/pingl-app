@@ -34,6 +34,7 @@ export const lightTheme = {
             regular: 'Poppins-Regular',
             bold: 'Poppins-Bold',
         },
+        Roboto: {}
     },
   };
   
