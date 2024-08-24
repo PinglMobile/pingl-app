@@ -9,8 +9,10 @@ export const lightTheme = {
       notification: '#FF5A5F',
     },
     fonts: {
-      regular: 'Poppins-Regular',
-      bold: 'Poppins-Bold',
+        Poppins: {
+            regular: 'Poppins-Regular',
+            bold: 'Poppins-Bold',
+        },
     },
   };
 
