@@ -13,9 +13,6 @@ export const lightTheme = {
             regular: 'Poppins-Regular',
             bold: 'Poppins-Bold',
         },
-        Roboto: {},
-        Inter: {},
-        test: {}
     },
   };
 
@@ -36,9 +33,6 @@ export const lightTheme = {
             regular: 'Poppins-Regular',
             bold: 'Poppins-Bold',
         },
-        Roboto: {},
-        Inter: {},
-        test: {}
     },
   };
   
