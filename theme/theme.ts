@@ -14,6 +14,7 @@ export const lightTheme = {
             bold: 'Poppins-Bold',
         },
         Roboto: {},
+        Inter: {},
     },
   };
 
@@ -35,7 +36,7 @@ export const lightTheme = {
             bold: 'Poppins-Bold',
         },
         Roboto: {},
-        
+        Inter: {},
     },
   };
   
