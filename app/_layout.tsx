@@ -7,7 +7,7 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "react-native-reanimated";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
@@ -16,7 +16,6 @@ import Mapbox from "@rnmapbox/maps";
 
 import { TamaguiProvider, View } from "tamagui";
 import config from "../tamagui.config"; // your configuration
-import AnimatedSplashScreen from "@/components/AnimatedSplashScreen";
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -58,7 +57,6 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  const [isSplashVisible, setSplashVisible] = useState(true);
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
@@ -75,21 +73,8 @@ export default function RootLayout() {
     return null;
   }
 
-  return <AnimatedSplashScreen onFinish={() => setSplashVisible(false)} />;
+  return <RootLayoutNav />;
 }
-
-/*
-useEffect(() => {
-  // Hide the native splash screen after your custom splash screen finishes
-  if (!isSplashVisible) {
-    SplashScreen.hideAsync();
-  }
-}, [isSplashVisible]);
-
-if (isSplashVisible) {
-  return <AnimatedSplashScreen onFinish={() => setSplashVisible(false)} />;
-}
-*/
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();

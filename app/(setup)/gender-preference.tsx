@@ -25,7 +25,7 @@ export default function GenderPreferencePage() {
 
   const handleContinue = () => {
     if (selectedPreferences.length === 0) {
-      alert("Please select at least one preference.");
+      // alert("Please select at least one preference.");
     } else {
       console.log("Selected Preferences:", selectedPreferences);
       // Handle submission logic here

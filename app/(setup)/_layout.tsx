@@ -10,9 +10,9 @@ export default function SetupLayout() {
 
   // Mapping segments to steps
   const stepMapping = {
-    "phone-number": 1,
-    "phone-number-verification": 2,
-    email: 3,
+    "create-account": 1,
+    "phone-number": 2,
+    "phone-number-verification": 3,
     name: 4,
     gender: 5,
     "gender-preference": 6,

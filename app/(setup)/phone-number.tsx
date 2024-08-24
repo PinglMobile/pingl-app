@@ -7,9 +7,11 @@ import {
   StyleSheet,
   Pressable,
 } from "react-native";
+import { useForm, Controller } from "react-hook-form";
 import Icon from "@expo/vector-icons/FontAwesome";
-import { Link } from "expo-router";
 import CountryPicker from "react-native-country-picker-modal";
+import { useRouter } from "expo-router";
+import { supabase } from "@/lib/supabase";
 
 export default function PhoneNumberPage() {
   const error = console.error;
@@ -18,13 +20,58 @@ export default function PhoneNumberPage() {
     error(...args);
   };
 
+  const router = useRouter();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "onChange",
+  });
+
   const [countryCode, setCountryCode] = useState("US");
   const [callingCode, setCallingCode] = useState("1");
   const [visible, setVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onSelect = (country) => {
     setCountryCode(country.cca2);
     setCallingCode(country.callingCode[0]);
+  };
+
+  const onSubmit = async (data) => {
+    const { phoneNumber } = data;
+
+    // Format the phone number with the calling code
+    const formattedPhoneNumber = `+${callingCode}${phoneNumber}`;
+
+    try {
+      // Request OTP from Supabase
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: formattedPhoneNumber,
+      });
+
+      router.push({
+        pathname: "./phone-number-verification",
+        params: { phoneNumber: formattedPhoneNumber },
+      });
+
+      if (error) {
+        console.error("Error sending OTP:", error.message);
+        setErrorMessage("Failed to send OTP. Please try again.");
+      } else {
+        console.log("OTP sent successfully");
+        setErrorMessage(""); // Clear any previous error
+        // Navigate to OTP verification screen with phone number
+        router.push({
+          pathname: "./phone-number-verification",
+          params: { phoneNumber: formattedPhoneNumber },
+        });
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err.message);
+      setErrorMessage("An unexpected error occurred. Please try again.");
+    }
   };
 
   return (
@@ -47,14 +94,48 @@ export default function PhoneNumberPage() {
             </Text>
             <Icon name="chevron-down" size={16} color="#FFFFFF" />
           </TouchableOpacity>
-          <TextInput
-            style={styles.phoneInput}
-            placeholder="8135453664"
-            keyboardType="phone-pad"
-            maxLength={10}
-            placeholderTextColor="#BDBDBD"
+
+          <Controller
+            control={control}
+            rules={{
+              required: "Phone number is required",
+              pattern: {
+                value: /^\d{10,15}$/, // Allows only digits and limits length
+                message: "Phone number must be 10-15 digits",
+              },
+              maxLength: {
+                value: 15,
+                message: "Phone number cannot exceed 15 digits",
+              },
+              minLength: {
+                value: 10,
+                message: "Phone number must be at least 10 digits",
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                style={[
+                  styles.phoneInput,
+                  errors.phoneNumber ? styles.errorInput : null,
+                ]}
+                onBlur={onBlur}
+                onChangeText={(text) =>
+                  // Restrict input to numbers only
+                  onChange(text.replace(/[^0-9]/g, ""))
+                }
+                value={value}
+                keyboardType="phone-pad"
+                placeholderTextColor={"#BDBDBD"}
+                placeholder="1234567890"
+                maxLength={15} // Limits the number of characters
+              />
+            )}
+            name="phoneNumber"
           />
         </View>
+        {errors.phoneNumber && (
+          <Text style={styles.errorText}>{errors.phoneNumber.message}</Text>
+        )}
         <CountryPicker
           countryCode={countryCode}
           withFilter
@@ -67,11 +148,20 @@ export default function PhoneNumberPage() {
           onClose={() => setVisible(false)}
         />
       </View>
-      <Link href="./phone-number-verification" asChild>
-        <Pressable style={styles.continueButton}>
-          <Text style={styles.continueButtonText}>Continue</Text>
-        </Pressable>
-      </Link>
+      <Pressable
+        style={[
+          styles.continueButton,
+          !isValid && styles.disabledButton, // Apply disabled styles when form is not valid
+        ]}
+        onPress={handleSubmit(onSubmit)}
+        disabled={!isValid} // Disable the button when the form is not valid
+      >
+        <Text style={styles.continueButtonText}>Continue</Text>
+      </Pressable>
+
+      {errorMessage ? (
+        <Text style={styles.errorMessage}>{errorMessage}</Text>
+      ) : null}
     </View>
   );
 }
@@ -109,7 +199,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    marginBottom: 20,
+    marginBottom: 5, // Reduced margin to accommodate error text
   },
   countryCode: {
     flexDirection: "row",
@@ -132,6 +222,9 @@ const styles = StyleSheet.create({
     borderBottomColor: "#4F4F4F",
     paddingBottom: 10,
   },
+  errorInput: {
+    borderBottomColor: "#FF7366", // Red color for error state
+  },
   continueButton: {
     backgroundColor: "#FF7366", // Accent color for button
     paddingVertical: 15,
@@ -145,7 +238,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  icon: {
-    marginBottom: 20,
+  disabledButton: {
+    backgroundColor: "#FFB8A4", // Greyed out color for disabled button
+  },
+  errorText: {
+    color: "#FF7366",
+    marginTop: 5,
+    fontSize: 14, // Adjusted font size for error text
+  },
+  errorMessage: {
+    color: "#FF7366", // Error message color
+    marginTop: 20,
+    fontSize: 16,
+    textAlign: "center",
   },
 });

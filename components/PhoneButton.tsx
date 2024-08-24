@@ -1,16 +1,16 @@
 import React, { forwardRef } from "react";
 import { Pressable, Text, StyleSheet } from "react-native";
-import Icon from "@expo/vector-icons/FontAwesome";
+import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 
-interface PhoneButtonProps {
+interface EmailButtonProps {
   text: string;
   onPress: () => void;
 }
 
-const PhoneButton = forwardRef<Pressable, PhoneButtonProps>(
+const EmailButton = forwardRef<Pressable, EmailButtonProps>(
   ({ text, onPress }, ref) => (
     <Pressable ref={ref} style={styles.button} onPress={onPress}>
-      <Icon name="phone" size={25} color="white" style={styles.icon} />
+      <Icon name="email" size={27} color="white" style={styles.icon} />
       <Text style={styles.buttonText}>{text}</Text>
     </Pressable>
   )
@@ -39,4 +39,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PhoneButton;
+export default EmailButton;

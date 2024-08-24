@@ -15,7 +15,7 @@ export default function GenderSelectionPage() {
 
   const handleContinue = () => {
     if (!selectedGender) {
-      alert("Please select a gender.");
+      // alert("Please select a gender.");
     } else {
       console.log("Selected Gender:", selectedGender);
       // Handle submission logic here

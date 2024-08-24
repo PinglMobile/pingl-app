@@ -102,8 +102,8 @@ export default function LoginPage() {
           icon={require("../../assets/icons/apple.png")}
           onPress={handleAppleSignIn}
         />
-        <Link href="../(setup)/phone-number" asChild>
-          <PhoneButton text="Continue with Phone Number" onPress={() => {}} />
+        <Link href="../(auth)/email" asChild>
+          <PhoneButton text="Continue with Email" onPress={() => {}} />
         </Link>
       </View>
     </ImageBackground>
