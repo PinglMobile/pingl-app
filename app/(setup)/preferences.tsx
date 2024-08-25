@@ -1,3 +1,4 @@
+import { useAppTheme } from "@/theme/ThemeProvider";
 import React, { useState } from "react";
 import {
   View,
@@ -8,6 +9,8 @@ import {
 } from "react-native";
 
 export default function PreferencesPromptPage() {
+  const { theme } = useAppTheme();
+
   const [step, setStep] = useState(1);
   const [preferences, setPreferences] = useState({
     food: [],
@@ -66,7 +69,7 @@ export default function PreferencesPromptPage() {
   };
 
   const maxSelections = {
-    food: Infinity, // Unlimited selection for food preferences
+    food: Infinity,
     dating: 1,
     events: 3,
     lifestyle: 3,
@@ -98,14 +101,22 @@ export default function PreferencesPromptPage() {
           key={index}
           style={[
             styles.option,
-            preferences[category].includes(item) && styles.selectedOption,
+            {
+              backgroundColor: preferences[category].includes(item)
+                ? theme.colors.primary
+                : theme.colors.card,
+            },
           ]}
           onPress={() => handleSelect(category, item)}
         >
           <Text
             style={[
               styles.optionText,
-              preferences[category].includes(item) && styles.selectedOptionText,
+              {
+                color: preferences[category].includes(item)
+                  ? theme.colors.buttonText
+                  : theme.colors.text,
+              },
             ]}
           >
             {item}
@@ -120,8 +131,26 @@ export default function PreferencesPromptPage() {
       case 1:
         return (
           <>
-            <Text style={styles.headerText}>Select Your Food Preferences</Text>
-            <Text style={styles.subText}>
+            <Text
+              style={[
+                styles.headerText,
+                {
+                  color: theme.colors.text,
+                  fontFamily: theme.fonts.poppins.bold,
+                },
+              ]}
+            >
+              Select Your Food Preferences
+            </Text>
+            <Text
+              style={[
+                styles.subText,
+                {
+                  color: theme.colors.subText,
+                  fontFamily: theme.fonts.poppins.regular,
+                },
+              ]}
+            >
               Choose as many types of food you enjoy as you like.
             </Text>
             {renderOptions("food")}
@@ -130,10 +159,26 @@ export default function PreferencesPromptPage() {
       case 2:
         return (
           <>
-            <Text style={styles.headerText}>
+            <Text
+              style={[
+                styles.headerText,
+                {
+                  color: theme.colors.text,
+                  fontFamily: theme.fonts.poppins.bold,
+                },
+              ]}
+            >
               Select Your Dating Preferences
             </Text>
-            <Text style={styles.subText}>
+            <Text
+              style={[
+                styles.subText,
+                {
+                  color: theme.colors.subText,
+                  fontFamily: theme.fonts.poppins.regular,
+                },
+              ]}
+            >
               Choose 1 type of dating preference.
             </Text>
             {renderOptions("dating")}
@@ -142,8 +187,26 @@ export default function PreferencesPromptPage() {
       case 3:
         return (
           <>
-            <Text style={styles.headerText}>Select Your Event Preferences</Text>
-            <Text style={styles.subText}>
+            <Text
+              style={[
+                styles.headerText,
+                {
+                  color: theme.colors.text,
+                  fontFamily: theme.fonts.poppins.bold,
+                },
+              ]}
+            >
+              Select Your Event Preferences
+            </Text>
+            <Text
+              style={[
+                styles.subText,
+                {
+                  color: theme.colors.subText,
+                  fontFamily: theme.fonts.poppins.regular,
+                },
+              ]}
+            >
               Choose up to 3 types of events you like to attend.
             </Text>
             {renderOptions("events")}
@@ -152,10 +215,26 @@ export default function PreferencesPromptPage() {
       case 4:
         return (
           <>
-            <Text style={styles.headerText}>
+            <Text
+              style={[
+                styles.headerText,
+                {
+                  color: theme.colors.text,
+                  fontFamily: theme.fonts.poppins.bold,
+                },
+              ]}
+            >
               Select Your Lifestyle Preferences
             </Text>
-            <Text style={styles.subText}>
+            <Text
+              style={[
+                styles.subText,
+                {
+                  color: theme.colors.subText,
+                  fontFamily: theme.fonts.poppins.regular,
+                },
+              ]}
+            >
               Choose up to 3 lifestyle preferences.
             </Text>
             {renderOptions("lifestyle")}
@@ -167,7 +246,9 @@ export default function PreferencesPromptPage() {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <ScrollView contentContainerStyle={styles.contentContainer}>
         {renderStep()}
       </ScrollView>
@@ -175,16 +256,16 @@ export default function PreferencesPromptPage() {
       <TouchableOpacity
         style={[
           styles.continueButton,
-          preferences.food.length === 0 && step === 1 && styles.disabledButton,
-          preferences.dating.length === 0 &&
-            step === 2 &&
-            styles.disabledButton,
-          preferences.events.length === 0 &&
-            step === 3 &&
-            styles.disabledButton,
-          preferences.lifestyle.length === 0 &&
-            step === 4 &&
-            styles.disabledButton,
+          {
+            backgroundColor: theme.colors.primary,
+            opacity:
+              (step === 1 && preferences.food.length === 0) ||
+              (step === 2 && preferences.dating.length === 0) ||
+              (step === 3 && preferences.events.length === 0) ||
+              (step === 4 && preferences.lifestyle.length === 0)
+                ? 0.6
+                : 1,
+          },
         ]}
         onPress={handleContinue}
         disabled={
@@ -194,7 +275,15 @@ export default function PreferencesPromptPage() {
           (step === 4 && preferences.lifestyle.length === 0)
         }
       >
-        <Text style={styles.continueButtonText}>
+        <Text
+          style={[
+            styles.continueButtonText,
+            {
+              color: theme.colors.buttonText,
+              fontFamily: theme.fonts.poppins.bold,
+            },
+          ]}
+        >
           {step < 4 ? "Continue" : "Submit"}
         </Text>
       </TouchableOpacity>
@@ -205,7 +294,6 @@ export default function PreferencesPromptPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#212121", // Dark background
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 20,
@@ -218,15 +306,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 10,
-    fontFamily: "Poppins-Bold",
-    color: "#FFFFFF", // Light text for contrast
   },
   subText: {
     fontSize: 14,
-    color: "#BDBDBD", // Lighter gray for subtext
     textAlign: "center",
     marginBottom: 20,
-    fontFamily: "Poppins-Regular",
   },
   optionsContainer: {
     flexDirection: "row",
@@ -234,7 +318,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   option: {
-    backgroundColor: "#424242", // Darker background for options
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 20,
@@ -242,18 +325,9 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 14,
-    color: "#FFFFFF", // Light text color for options
-    fontFamily: "Poppins-Regular",
     textAlign: "center",
   },
-  selectedOption: {
-    backgroundColor: "#FF7366", // Keep the accent color for selected options
-  },
-  selectedOptionText: {
-    color: "white",
-  },
   continueButton: {
-    backgroundColor: "#FF7366", // Accent color for the button
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: "center",
@@ -261,13 +335,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginVertical: 20,
   },
-  disabledButton: {
-    backgroundColor: "#FFB8A4", // Lighter version for disabled button
-  },
   continueButtonText: {
-    color: "white",
     fontSize: 16,
     fontWeight: "bold",
-    fontFamily: "Poppins-Bold",
   },
 });

@@ -12,12 +12,14 @@ import {
 import Icon from "@expo/vector-icons/MaterialIcons";
 import { useRouter, useSearchParams } from "expo-router";
 import { supabase } from "@/lib/supabase";
+import { useAppTheme } from "@/theme/ThemeProvider";
 
 export default function EmailVerificationPage() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
-  //const { email } = useSearchParams(); // Get the email passed as a parameter
+  const { theme } = useAppTheme();
+  // const { email } = useSearchParams(); // Get the email passed as a parameter
 
   const handleChange = (text, index) => {
     let newCode = [...code];
@@ -51,6 +53,8 @@ export default function EmailVerificationPage() {
   const handleVerify = async () => {
     const verificationCode = code.join("");
     console.log("Verification code entered:", verificationCode);
+
+    // Uncomment and use this block for actual OTP verification
     /*
     const { error } = await supabase.auth.verifyOtp({
       email: email, // Use the passed email for verification
@@ -78,23 +82,53 @@ export default function EmailVerificationPage() {
       console.error("Error resending OTP:", error.message);
       // Alert.alert("Error", "Failed to resend the code. Please try again.");
     } else {
-      //Alert.alert("Success", "Verification code resent successfully.");
+      // Alert.alert("Success", "Verification code resent successfully.");
     }
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <View style={styles.contentContainer}>
-        <Icon name="email" size={50} color="#FF7366" style={styles.icon} />
-        <Text style={styles.headerText}>Enter the verification code</Text>
-        <Text style={styles.subText}>
+        <Icon
+          name="email"
+          size={50}
+          color={theme.colors.primary}
+          style={styles.icon}
+        />
+        <Text
+          style={[
+            styles.headerText,
+            { color: theme.colors.text, fontFamily: theme.fonts.poppins.bold },
+          ]}
+        >
+          Enter the verification code
+        </Text>
+        <Text
+          style={[
+            styles.subText,
+            {
+              color: theme.colors.subText,
+              fontFamily: theme.fonts.poppins.regular,
+            },
+          ]}
+        >
           We've sent a verification code to {"email"}.
         </Text>
         <View style={styles.codeInputContainer}>
           {code.map((digit, index) => (
             <TextInput
               key={index}
-              style={styles.codeInput}
+              style={[
+                styles.codeInput,
+                {
+                  backgroundColor: theme.colors.card,
+                  color: theme.colors.text,
+                  fontFamily: theme.fonts.poppins.regular,
+                  borderColor: theme.colors.border,
+                },
+              ]}
               keyboardType="number-pad"
               maxLength={1}
               value={digit}
@@ -102,19 +136,52 @@ export default function EmailVerificationPage() {
               onKeyPress={(e) => handleKeyPress(e, index)}
               ref={(ref) => (refs[index] = ref)}
               placeholder="-"
-              placeholderTextColor="#BDBDBD"
+              placeholderTextColor={theme.colors.subText}
             />
           ))}
         </View>
         {errorMessage ? (
-          <Text style={styles.errorText}>{errorMessage}</Text>
+          <Text
+            style={[
+              styles.errorText,
+              {
+                color: theme.colors.primary,
+                fontFamily: theme.fonts.poppins.regular,
+              },
+            ]}
+          >
+            {errorMessage}
+          </Text>
         ) : null}
         <TouchableOpacity onPress={handleResend}>
-          <Text style={styles.resendText}>Resend Code</Text>
+          <Text
+            style={[
+              styles.resendText,
+              {
+                color: theme.colors.primary,
+                fontFamily: theme.fonts.poppins.bold,
+              },
+            ]}
+          >
+            Resend Code
+          </Text>
         </TouchableOpacity>
       </View>
-      <Pressable style={styles.verifyButton} onPress={handleVerify}>
-        <Text style={styles.verifyButtonText}>Verify</Text>
+      <Pressable
+        style={[styles.verifyButton, { backgroundColor: theme.colors.primary }]}
+        onPress={handleVerify}
+      >
+        <Text
+          style={[
+            styles.verifyButtonText,
+            {
+              color: theme.colors.buttonText,
+              fontFamily: theme.fonts.poppins.bold,
+            },
+          ]}
+        >
+          Verify
+        </Text>
       </Pressable>
     </View>
   );
@@ -123,7 +190,6 @@ export default function EmailVerificationPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#212121", // Dark background color
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 40,
@@ -139,17 +205,13 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 25,
     fontWeight: "bold",
-    color: "#FFFFFF", // Light text color for dark theme
     textAlign: "center",
     marginBottom: 10,
-    fontFamily: "Poppins-Bold",
   },
   subText: {
     fontSize: 16,
-    color: "#BDBDBD", // Light gray for subtext
     textAlign: "center",
     marginBottom: 40,
-    fontFamily: "Poppins-Regular",
   },
   codeInputContainer: {
     flexDirection: "row",
@@ -161,21 +223,16 @@ const styles = StyleSheet.create({
     width: 40,
     height: 50,
     fontSize: 20,
-    color: "#FFFFFF", // Light text color for inputs
     borderWidth: 1,
-    borderColor: "#4F4F4F", // Dark gray border
     textAlign: "center",
     borderRadius: 10,
-    backgroundColor: "#424242", // Darker background for input fields
   },
   resendText: {
-    color: "#FF7366", // Accent color for resend text
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 10,
   },
   verifyButton: {
-    backgroundColor: "#FF7366", // Accent color for button
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: "center",
@@ -183,13 +240,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   verifyButtonText: {
-    color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },
   errorText: {
-    color: "#FF7366", // Accent color for error message
-    fontSize: 14,
     marginTop: 10,
+    fontSize: 14,
   },
 });

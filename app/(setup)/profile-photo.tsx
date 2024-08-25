@@ -6,19 +6,22 @@ import {
   TouchableOpacity,
   StyleSheet,
   Pressable,
+  ScrollView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import Icon from "@expo/vector-icons/MaterialIcons";
-import { Link } from "expo-router";
-import { ScrollView } from "tamagui";
+import { Link, useRouter } from "expo-router";
+import { useAppTheme } from "@/theme/ThemeProvider";
 
 export default function PhotoUploadPage() {
+  const { theme } = useAppTheme();
+  const router = useRouter();
   const [photos, setPhotos] = useState([null, null, null, null, null, null]);
 
   const pickImage = async (index) => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      // alert("Sorry, we need camera roll permissions to make this work!");
+      alert("Sorry, we need camera roll permissions to make this work!");
       return;
     }
 
@@ -39,7 +42,7 @@ export default function PhotoUploadPage() {
   const handleContinue = () => {
     const requiredPhotos = photos.slice(0, 4);
     if (requiredPhotos.some((photo) => photo === null)) {
-      //alert("Please upload at least the first four photos.");
+      alert("Please upload at least the first four photos.");
     } else {
       console.log("Uploaded Photos:", photos);
       // Handle submission logic here
@@ -48,10 +51,30 @@ export default function PhotoUploadPage() {
 
   return (
     <ScrollView>
-      <View style={styles.container}>
+      <View
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <View style={styles.contentContainer}>
-          <Text style={styles.headerText}>Add Your Best Photos</Text>
-          <Text style={styles.subText}>
+          <Text
+            style={[
+              styles.headerText,
+              {
+                color: theme.colors.text,
+                fontFamily: theme.fonts.poppins.bold,
+              },
+            ]}
+          >
+            Add Your Best Photos
+          </Text>
+          <Text
+            style={[
+              styles.subText,
+              {
+                color: theme.colors.subText,
+                fontFamily: theme.fonts.poppins.regular,
+              },
+            ]}
+          >
             Upload six photos to complete your profile. The first four are
             required.
           </Text>
@@ -60,7 +83,11 @@ export default function PhotoUploadPage() {
             {photos.map((photo, index) => (
               <TouchableOpacity
                 key={index}
-                style={[styles.photoSlot, index === 0 && styles.mainPhotoSlot]}
+                style={[
+                  styles.photoSlot,
+                  index === 0 && styles.mainPhotoSlot,
+                  { backgroundColor: theme.colors.card },
+                ]}
                 onPress={() => pickImage(index)}
               >
                 {photo ? (
@@ -75,18 +102,33 @@ export default function PhotoUploadPage() {
                   </View>
                 ) : (
                   <View style={styles.photoPlaceholder}>
-                    <Icon name="add-circle" size={50} color="#FF5A5F" />
+                    <Icon
+                      name="add-circle"
+                      size={50}
+                      color={theme.colors.primary}
+                    />
                   </View>
                 )}
               </TouchableOpacity>
             ))}
           </View>
         </View>
-        <Link href="./customize-feed" asChild>
-          <Pressable style={styles.continueButton} onPress={handleContinue}>
-            <Text style={styles.continueButtonText}>Continue</Text>
-          </Pressable>
-        </Link>
+        <Pressable
+          style={[
+            styles.continueButton,
+            { backgroundColor: theme.colors.primary },
+          ]}
+          onPress={() => router.push("/customize-feed")}
+        >
+          <Text
+            style={[
+              styles.continueButtonText,
+              { fontFamily: theme.fonts.poppins.bold },
+            ]}
+          >
+            Continue
+          </Text>
+        </Pressable>
       </View>
     </ScrollView>
   );
@@ -95,7 +137,6 @@ export default function PhotoUploadPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#212121", // Dark background color
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 40,
@@ -107,17 +148,13 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 24,
     fontWeight: "600",
-    color: "#FFFFFF", // Light text color for dark theme
     textAlign: "center",
     marginBottom: 10,
-    fontFamily: "Poppins-Bold",
   },
   subText: {
     fontSize: 14,
-    color: "#BDBDBD", // Light gray for subtext
     textAlign: "center",
     marginBottom: 40,
-    fontFamily: "Poppins-Regular",
   },
   photosContainer: {
     flexDirection: "row",
@@ -128,13 +165,10 @@ const styles = StyleSheet.create({
   photoSlot: {
     width: "48%",
     aspectRatio: 1, // Square frame for regular photos
-    backgroundColor: "#424242", // Darker background for photo slots
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 15,
-    borderWidth: 1,
-
     overflow: "hidden",
   },
   mainPhotoSlot: {
@@ -167,7 +201,6 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   continueButton: {
-    backgroundColor: "#FF5A5F", // Accent color for button
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: "center",
@@ -186,6 +219,5 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
-    fontFamily: "Poppins-Bold",
   },
 });

@@ -10,7 +10,7 @@ interface EmailButtonProps {
 const EmailButton = forwardRef<Pressable, EmailButtonProps>(
   ({ text, onPress }, ref) => (
     <Pressable ref={ref} style={styles.button} onPress={onPress}>
-      <Icon name="email" size={27} color="white" style={styles.icon} />
+      <Icon name="email" size={25} color="white" style={styles.icon} />
       <Text style={styles.buttonText}>{text}</Text>
     </Pressable>
   )
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     marginTop: 13,
   },
   icon: {
-    marginRight: 15,
+    marginRight: 11,
   },
   buttonText: {
     fontSize: 15,

@@ -12,6 +12,7 @@ import Icon from "@expo/vector-icons/FontAwesome";
 import CountryPicker from "react-native-country-picker-modal";
 import { useRouter } from "expo-router";
 import { supabase } from "@/lib/supabase";
+import { useAppTheme } from "@/theme/ThemeProvider";
 
 export default function PhoneNumberPage() {
   const error = console.error;
@@ -21,6 +22,7 @@ export default function PhoneNumberPage() {
   };
 
   const router = useRouter();
+  const { theme } = useAppTheme();
   const {
     control,
     handleSubmit,
@@ -45,15 +47,11 @@ export default function PhoneNumberPage() {
     // Format the phone number with the calling code
     const formattedPhoneNumber = `+${callingCode}${phoneNumber}`;
 
+    /*
     try {
       // Request OTP from Supabase
       const { error } = await supabase.auth.signInWithOtp({
         phone: formattedPhoneNumber,
-      });
-
-      router.push({
-        pathname: "./phone-number-verification",
-        params: { phoneNumber: formattedPhoneNumber },
       });
 
       if (error) {
@@ -72,27 +70,56 @@ export default function PhoneNumberPage() {
       console.error("Unexpected error:", err.message);
       setErrorMessage("An unexpected error occurred. Please try again.");
     }
+    */
+
+    router.push({
+      pathname: "./phone-number-verification",
+      params: { phoneNumber: formattedPhoneNumber },
+    });
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <View style={styles.contentContainer}>
-        <Text style={styles.headerText}>
+        <Text
+          style={[
+            styles.headerText,
+            { color: theme.colors.text, fontFamily: theme.fonts.poppins.bold },
+          ]}
+        >
           What’s your phone number, if you don't mind?
         </Text>
-        <Text style={styles.subText}>
+        <Text
+          style={[
+            styles.subText,
+            {
+              color: theme.colors.subText,
+              fontFamily: theme.fonts.poppins.regular,
+            },
+          ]}
+        >
           We only use phone numbers to verify that you are real. Your phone
           number will not be shown on your profile.
         </Text>
         <View style={styles.inputContainer}>
           <TouchableOpacity
-            style={styles.countryCode}
+            style={[styles.countryCode, { borderColor: theme.colors.border }]}
             onPress={() => setVisible(true)}
           >
-            <Text style={styles.countryText}>
+            <Text
+              style={[
+                styles.countryText,
+                {
+                  color: theme.colors.text,
+                  fontFamily: theme.fonts.poppins.regular,
+                },
+              ]}
+            >
               {countryCode} +{callingCode}
             </Text>
-            <Icon name="chevron-down" size={16} color="#FFFFFF" />
+            <Icon name="chevron-down" size={16} color={theme.colors.text} />
           </TouchableOpacity>
 
           <Controller
@@ -117,6 +144,11 @@ export default function PhoneNumberPage() {
                 style={[
                   styles.phoneInput,
                   errors.phoneNumber ? styles.errorInput : null,
+                  {
+                    color: theme.colors.text,
+                    fontFamily: theme.fonts.poppins.regular,
+                    borderBottomColor: theme.colors.border,
+                  },
                 ]}
                 onBlur={onBlur}
                 onChangeText={(text) =>
@@ -125,7 +157,7 @@ export default function PhoneNumberPage() {
                 }
                 value={value}
                 keyboardType="phone-pad"
-                placeholderTextColor={"#BDBDBD"}
+                placeholderTextColor={theme.colors.subText}
                 placeholder="1234567890"
                 maxLength={15} // Limits the number of characters
               />
@@ -134,7 +166,17 @@ export default function PhoneNumberPage() {
           />
         </View>
         {errors.phoneNumber && (
-          <Text style={styles.errorText}>{errors.phoneNumber.message}</Text>
+          <Text
+            style={[
+              styles.errorText,
+              {
+                color: theme.colors.primary,
+                fontFamily: theme.fonts.poppins.regular,
+              },
+            ]}
+          >
+            {errors.phoneNumber.message}
+          </Text>
         )}
         <CountryPicker
           countryCode={countryCode}
@@ -151,16 +193,41 @@ export default function PhoneNumberPage() {
       <Pressable
         style={[
           styles.continueButton,
+          {
+            backgroundColor: isValid
+              ? theme.colors.primary
+              : theme.colors.disabled,
+          },
           !isValid && styles.disabledButton, // Apply disabled styles when form is not valid
         ]}
         onPress={handleSubmit(onSubmit)}
         disabled={!isValid} // Disable the button when the form is not valid
       >
-        <Text style={styles.continueButtonText}>Continue</Text>
+        <Text
+          style={[
+            styles.continueButtonText,
+            {
+              color: theme.colors.buttonText,
+              fontFamily: theme.fonts.poppins.bold,
+            },
+          ]}
+        >
+          Continue
+        </Text>
       </Pressable>
 
       {errorMessage ? (
-        <Text style={styles.errorMessage}>{errorMessage}</Text>
+        <Text
+          style={[
+            styles.errorMessage,
+            {
+              color: theme.colors.primary,
+              fontFamily: theme.fonts.poppins.regular,
+            },
+          ]}
+        >
+          {errorMessage}
+        </Text>
       ) : null}
     </View>
   );
@@ -169,7 +236,6 @@ export default function PhoneNumberPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#212121", // Dark background color
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 40,
@@ -181,19 +247,15 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 25,
     fontWeight: "bold",
-    color: "#FFFFFF", // Light text color
     textAlign: "left",
     marginBottom: 10,
-    fontFamily: "Poppins-Bold",
     padding: 0,
   },
   subText: {
     fontSize: 16,
-    color: "#BDBDBD", // Light gray for subtext
     textAlign: "left",
     marginBottom: 40,
     padding: 0,
-    fontFamily: "Poppins-Regular",
   },
   inputContainer: {
     flexDirection: "row",
@@ -206,27 +268,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#4F4F4F",
     paddingBottom: 10,
   },
   countryText: {
     fontSize: 16,
-    color: "#FFFFFF", // Light text color for dark theme
     marginRight: 5,
   },
   phoneInput: {
     flex: 1,
     fontSize: 16,
-    color: "#FFFFFF", // Light text color for input
     borderBottomWidth: 1,
-    borderBottomColor: "#4F4F4F",
     paddingBottom: 10,
   },
   errorInput: {
     borderBottomColor: "#FF7366", // Red color for error state
   },
   continueButton: {
-    backgroundColor: "#FF7366", // Accent color for button
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: "center",
@@ -234,7 +291,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   continueButtonText: {
-    color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -242,12 +298,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFB8A4", // Greyed out color for disabled button
   },
   errorText: {
-    color: "#FF7366",
     marginTop: 5,
     fontSize: 14, // Adjusted font size for error text
   },
   errorMessage: {
-    color: "#FF7366", // Error message color
     marginTop: 20,
     fontSize: 16,
     textAlign: "center",
