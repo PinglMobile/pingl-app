@@ -8,17 +8,21 @@ import {
 } from "react-native";
 import LottieView from "lottie-react-native"; // Import Lottie for animations
 import { useNavigation } from "@react-navigation/native"; // Assuming you are using react-navigation
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { useAppTheme } from "@/theme/ThemeProvider";
 
-export default function IntroScreen() {
-  const navigation = useNavigation();
+export default function CustomizeFeed() {
+  const { theme } = useAppTheme();
+  const router = useRouter();
 
   const handleContinue = () => {
-    //navigation.navigate("PreferencesPrompt"); // Replace with the actual route name of your preferences page
+    router.push("/preferences");
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <View style={styles.animationContainer}>
         <LottieView
           source={require("../../assets/animations/animation.json")} // Replace with your Lottie animation file
@@ -27,16 +31,43 @@ export default function IntroScreen() {
           style={styles.animation}
         />
 
-        <Text style={styles.headerText}>Customize Your Experience</Text>
-        <Text style={styles.subText}>
+        <Text
+          style={[
+            styles.headerText,
+            { color: theme.colors.text, fontFamily: theme.fonts.poppins.bold },
+          ]}
+        >
+          Customize Your Experience
+        </Text>
+        <Text
+          style={[
+            styles.subText,
+            {
+              color: theme.colors.subText,
+              fontFamily: theme.fonts.poppins.regular,
+            },
+          ]}
+        >
           Let's take a moment to gather your preferences so we can personalize
           your feed and find the best matches for you.
         </Text>
-        <Link href="./preferences" asChild>
-          <Pressable style={styles.continueButton} onPress={handleContinue}>
-            <Text style={styles.continueButtonText}>Continue</Text>
-          </Pressable>
-        </Link>
+
+        <Pressable
+          style={[
+            styles.continueButton,
+            { backgroundColor: theme.colors.primary },
+          ]}
+          onPress={handleContinue}
+        >
+          <Text
+            style={[
+              styles.continueButtonText,
+              { fontFamily: theme.fonts.poppins.bold },
+            ]}
+          >
+            Continue
+          </Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -47,7 +78,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#212121",
     padding: 20,
   },
   animationContainer: {
@@ -65,18 +95,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 15,
-    fontFamily: "Poppins-Bold",
-    color: "white",
   },
   subText: {
     fontSize: 16,
-    color: "white",
     textAlign: "center",
     marginBottom: 40,
-    fontFamily: "Poppins-Regular",
   },
   continueButton: {
-    backgroundColor: "#FF7366",
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 30,
@@ -86,6 +111,5 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
-    fontFamily: "Poppins-Bold",
   },
 });

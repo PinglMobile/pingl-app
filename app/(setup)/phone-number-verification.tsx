@@ -9,9 +9,13 @@ import {
   Keyboard,
 } from "react-native";
 import Icon from "@expo/vector-icons/FontAwesome";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { useAppTheme } from "@/theme/ThemeProvider";
 
 export default function PhoneNumberVerificationPage() {
+  const router = useRouter();
+  const { theme } = useAppTheme();
+
   const [code, setCode] = useState(["", "", "", "", "", ""]);
 
   const handleChange = (text, index) => {
@@ -55,18 +59,48 @@ export default function PhoneNumberVerificationPage() {
   };
 
   return (
-    <Pressable onPress={Keyboard.dismiss} style={styles.container}>
+    <Pressable
+      onPress={Keyboard.dismiss}
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <View style={styles.contentContainer}>
-        <Icon name="shield" size={50} color="#FF7366" style={styles.icon} />
-        <Text style={styles.headerText}>Enter the verification code</Text>
-        <Text style={styles.subText}>
+        <Icon
+          name="shield"
+          size={50}
+          color={theme.colors.primary}
+          style={styles.icon}
+        />
+        <Text
+          style={[
+            styles.headerText,
+            { color: theme.colors.text, fontFamily: theme.fonts.poppins.bold },
+          ]}
+        >
+          Enter the verification code
+        </Text>
+        <Text
+          style={[
+            styles.subText,
+            {
+              color: theme.colors.subText,
+              fontFamily: theme.fonts.poppins.regular,
+            },
+          ]}
+        >
           We've sent a verification code to your phone number.
         </Text>
         <View style={styles.codeInputContainer}>
           {code.map((digit, index) => (
             <TextInput
               key={index}
-              style={styles.codeInput}
+              style={[
+                styles.codeInput,
+                {
+                  color: theme.colors.text,
+                  borderColor: theme.colors.border,
+                  backgroundColor: theme.colors.card,
+                },
+              ]}
               keyboardType="number-pad"
               maxLength={1}
               value={digit}
@@ -74,19 +108,33 @@ export default function PhoneNumberVerificationPage() {
               onKeyPress={(e) => handleKeyPress(e, index)}
               ref={(ref) => (refs[index] = ref)}
               placeholder="-"
-              placeholderTextColor="#BDBDBD"
+              placeholderTextColor={theme.colors.subText}
             />
           ))}
         </View>
         <TouchableOpacity onPress={handleResend}>
-          <Text style={styles.resendText}>Resend Code</Text>
+          <Text style={[styles.resendText, { color: theme.colors.primary }]}>
+            Resend Code
+          </Text>
         </TouchableOpacity>
       </View>
-      <Link href="./name" asChild>
-        <Pressable style={styles.verifyButton} onPress={handleVerify}>
-          <Text style={styles.verifyButtonText}>Verify</Text>
-        </Pressable>
-      </Link>
+
+      <Pressable
+        style={[styles.verifyButton, { backgroundColor: theme.colors.primary }]}
+        onPress={() => router.push("/name")}
+      >
+        <Text
+          style={[
+            styles.verifyButtonText,
+            {
+              color: theme.colors.buttonText,
+              fontFamily: theme.fonts.poppins.bold,
+            },
+          ]}
+        >
+          Verify
+        </Text>
+      </Pressable>
     </Pressable>
   );
 }
@@ -94,7 +142,6 @@ export default function PhoneNumberVerificationPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#212121", // Dark background color
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 40,
@@ -110,17 +157,13 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 25,
     fontWeight: "bold",
-    color: "#FFFFFF", // Light text color for dark theme
     textAlign: "center",
     marginBottom: 10,
-    fontFamily: "Poppins-Bold",
   },
   subText: {
     fontSize: 16,
-    color: "#BDBDBD", // Light gray for subtext
     textAlign: "center",
     marginBottom: 40,
-    fontFamily: "Poppins-Regular",
   },
   codeInputContainer: {
     flexDirection: "row",
@@ -132,21 +175,16 @@ const styles = StyleSheet.create({
     width: 40,
     height: 50,
     fontSize: 20,
-    color: "#FFFFFF", // Light text color for inputs
     borderWidth: 1,
-    borderColor: "#4F4F4F", // Dark gray border
     textAlign: "center",
     borderRadius: 10,
-    backgroundColor: "#424242", // Darker background for input fields
   },
   resendText: {
-    color: "#FF7366", // Accent color for resend text
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 10,
   },
   verifyButton: {
-    backgroundColor: "#FF7366", // Accent color for button
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: "center",
@@ -154,7 +192,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   verifyButtonText: {
-    color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },

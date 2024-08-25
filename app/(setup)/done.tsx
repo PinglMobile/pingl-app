@@ -9,8 +9,10 @@ import {
 import LottieView from "lottie-react-native"; // Import Lottie for animations
 import { useNavigation } from "@react-navigation/native"; // Assuming you are using react-navigation
 import { Link } from "expo-router";
+import { useAppTheme } from "@/theme/ThemeProvider";
 
-export default function IntroScreen() {
+export default function Done() {
+  const { theme } = useAppTheme();
   const navigation = useNavigation();
 
   const handleContinue = () => {

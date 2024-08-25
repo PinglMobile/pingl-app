@@ -8,17 +8,21 @@ import {
 } from "react-native";
 import LottieView from "lottie-react-native"; // Import Lottie for animations
 import { useNavigation } from "@react-navigation/native"; // Assuming you are using react-navigation
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { useAppTheme } from "@/theme/ThemeProvider";
 
-export default function IntroScreen() {
-  const navigation = useNavigation();
+export default function CreateAccount() {
+  const router = useRouter();
+  const { theme } = useAppTheme();
 
   const handleContinue = () => {
-    //navigation.navigate("PreferencesPrompt"); // Replace with the actual route name of your preferences page
+    router.push("/phone-number");
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <View style={styles.animationContainer}>
         <LottieView
           source={require("../../assets/animations/love-animation.json")} // Replace with your Lottie animation file
@@ -27,18 +31,50 @@ export default function IntroScreen() {
           style={styles.animation}
         />
         <View style={styles.textContainer}>
-          <Text style={styles.headerText}>Let's set up your account</Text>
-          <Text style={styles.subText}>
+          <Text
+            style={[
+              styles.headerText,
+              {
+                color: theme.colors.text,
+                fontFamily: theme.fonts.poppins.bold,
+              },
+            ]}
+          >
+            Let's set up your account
+          </Text>
+          <Text
+            style={[
+              styles.subText,
+              {
+                color: theme.colors.subText,
+                fontFamily: theme.fonts.poppins.regular,
+              },
+            ]}
+          >
             Fill in the necessary details so we can create your account for you.
           </Text>
         </View>
       </View>
 
-      <Link href="./phone-number" asChild>
-        <Pressable style={styles.continueButton} onPress={handleContinue}>
-          <Text style={styles.continueButtonText}>Continue</Text>
-        </Pressable>
-      </Link>
+      <Pressable
+        style={[
+          styles.continueButton,
+          { backgroundColor: theme.colors.primary },
+        ]}
+        onPress={handleContinue}
+      >
+        <Text
+          style={[
+            styles.continueButtonText,
+            {
+              color: theme.colors.buttonText,
+              fontFamily: theme.fonts.poppins.bold,
+            },
+          ]}
+        >
+          Continue
+        </Text>
+      </Pressable>
     </View>
   );
 }
@@ -47,14 +83,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
-    backgroundColor: "#212121",
     paddingHorizontal: 20,
     paddingVertical: 40,
     marginTop: -20,
   },
   animationContainer: {
     flex: 1,
-
     alignItems: "center",
     marginBottom: 170,
   },
@@ -70,18 +104,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 15,
-    fontFamily: "Poppins-Bold",
-    color: "white",
   },
   subText: {
     fontSize: 16,
-    color: "white",
     textAlign: "center",
     marginBottom: 40,
-    fontFamily: "Poppins-Regular",
   },
   continueButton: {
-    backgroundColor: "#FF7366", // Accent color for button
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: "center",
@@ -89,7 +118,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   continueButtonText: {
-    color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },

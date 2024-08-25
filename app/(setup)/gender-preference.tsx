@@ -8,9 +8,12 @@ import {
   Keyboard,
 } from "react-native";
 import Icon from "@expo/vector-icons/FontAwesome";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { useAppTheme } from "@/theme/ThemeProvider";
 
 export default function GenderPreferencePage() {
+  const { theme } = useAppTheme();
+  const router = useRouter();
   const [selectedPreferences, setSelectedPreferences] = useState([]);
 
   const togglePreference = (preference) => {
@@ -30,14 +33,38 @@ export default function GenderPreferencePage() {
       console.log("Selected Preferences:", selectedPreferences);
       // Handle submission logic here
     }
+    router.push("/profile-photo");
   };
 
   return (
-    <Pressable onPress={Keyboard.dismiss} style={styles.container}>
+    <Pressable
+      onPress={Keyboard.dismiss}
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <View style={styles.contentContainer}>
-        <Icon name="heart" size={50} color="#FF7366" style={styles.icon} />
-        <Text style={styles.headerText}>Who are you interested in?</Text>
-        <Text style={styles.subText}>
+        <Icon
+          name="heart"
+          size={50}
+          color={theme.colors.primary}
+          style={styles.icon}
+        />
+        <Text
+          style={[
+            styles.headerText,
+            { color: theme.colors.text, fontFamily: theme.fonts.poppins.bold },
+          ]}
+        >
+          Who are you interested in?
+        </Text>
+        <Text
+          style={[
+            styles.subText,
+            {
+              color: theme.colors.subText,
+              fontFamily: theme.fonts.poppins.regular,
+            },
+          ]}
+        >
           This helps us find the right matches for you.
         </Text>
 
@@ -45,15 +72,22 @@ export default function GenderPreferencePage() {
           <TouchableOpacity
             style={[
               styles.preferenceOption,
-              selectedPreferences.includes("Men") && styles.selectedOption,
+              {
+                backgroundColor: theme.colors.card,
+              },
+              selectedPreferences.includes("Men") && {
+                backgroundColor: theme.colors.primary,
+              },
             ]}
             onPress={() => togglePreference("Men")}
           >
             <Text
               style={[
                 styles.preferenceText,
-                selectedPreferences.includes("Men") &&
-                  styles.selectedPreferenceText,
+                { color: theme.colors.text },
+                selectedPreferences.includes("Men") && {
+                  color: theme.colors.buttonText,
+                },
               ]}
             >
               Men
@@ -63,15 +97,20 @@ export default function GenderPreferencePage() {
           <TouchableOpacity
             style={[
               styles.preferenceOption,
-              selectedPreferences.includes("Women") && styles.selectedOption,
+              { backgroundColor: theme.colors.card },
+              selectedPreferences.includes("Women") && {
+                backgroundColor: theme.colors.primary,
+              },
             ]}
             onPress={() => togglePreference("Women")}
           >
             <Text
               style={[
                 styles.preferenceText,
-                selectedPreferences.includes("Women") &&
-                  styles.selectedPreferenceText,
+                { color: theme.colors.text },
+                selectedPreferences.includes("Women") && {
+                  color: theme.colors.buttonText,
+                },
               ]}
             >
               Women
@@ -81,15 +120,20 @@ export default function GenderPreferencePage() {
           <TouchableOpacity
             style={[
               styles.preferenceOption,
-              selectedPreferences.includes("Everyone") && styles.selectedOption,
+              { backgroundColor: theme.colors.card },
+              selectedPreferences.includes("Everyone") && {
+                backgroundColor: theme.colors.primary,
+              },
             ]}
             onPress={() => togglePreference("Everyone")}
           >
             <Text
               style={[
                 styles.preferenceText,
-                selectedPreferences.includes("Everyone") &&
-                  styles.selectedPreferenceText,
+                { color: theme.colors.text },
+                selectedPreferences.includes("Everyone") && {
+                  color: theme.colors.buttonText,
+                },
               ]}
             >
               Everyone
@@ -97,11 +141,25 @@ export default function GenderPreferencePage() {
           </TouchableOpacity>
         </View>
       </View>
-      <Link href="./profile-photo" asChild>
-        <Pressable style={styles.continueButton} onPress={handleContinue}>
-          <Text style={styles.continueButtonText}>Continue</Text>
-        </Pressable>
-      </Link>
+      <Pressable
+        style={[
+          styles.continueButton,
+          { backgroundColor: theme.colors.primary },
+        ]}
+        onPress={handleContinue}
+      >
+        <Text
+          style={[
+            styles.continueButtonText,
+            {
+              color: theme.colors.buttonText,
+              fontFamily: theme.fonts.poppins.bold,
+            },
+          ]}
+        >
+          Continue
+        </Text>
+      </Pressable>
     </Pressable>
   );
 }
@@ -109,7 +167,6 @@ export default function GenderPreferencePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#212121", // Dark background color
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 40,
@@ -125,23 +182,18 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 25,
     fontWeight: "bold",
-    color: "#FFFFFF", // Light text color for dark theme
     textAlign: "center",
     marginBottom: 10,
-    fontFamily: "Poppins-Bold",
   },
   subText: {
     fontSize: 16,
-    color: "#BDBDBD", // Light gray for subtext
     textAlign: "center",
     marginBottom: 40,
-    fontFamily: "Poppins-Regular",
   },
   preferenceOptions: {
     width: "100%",
   },
   preferenceOption: {
-    backgroundColor: "#424242", // Darker background for options
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -150,17 +202,10 @@ const styles = StyleSheet.create({
   },
   preferenceText: {
     fontSize: 18,
-    color: "#FFFFFF", // Light text color for options
+    color: "#FFFFFF", // Default text color
     fontFamily: "Poppins-Regular",
   },
-  selectedOption: {
-    backgroundColor: "#FF7366", // Accent color for selected option
-  },
-  selectedPreferenceText: {
-    color: "white",
-  },
   continueButton: {
-    backgroundColor: "#FF7366", // Accent color for button
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: "center",
@@ -168,9 +213,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   continueButtonText: {
-    color: "white",
     fontSize: 16,
     fontWeight: "bold",
-    fontFamily: "Poppins-Bold",
   },
 });

@@ -8,9 +8,13 @@ import {
   Keyboard,
 } from "react-native";
 import Icon from "@expo/vector-icons/FontAwesome";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
+import { useAppTheme } from "@/theme/ThemeProvider";
 
 export default function NameInputPage() {
+  const router = useRouter();
+  const { theme } = useAppTheme();
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
@@ -23,43 +27,101 @@ export default function NameInputPage() {
       console.log("Last Name (Optional):", lastName);
       // Handle name submission logic here
     }
+
+    router.push("/gender");
   };
 
   return (
-    <Pressable onPress={Keyboard.dismiss} style={styles.container}>
+    <Pressable
+      onPress={Keyboard.dismiss}
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <View style={styles.contentContainer}>
-        <Icon name="user" size={50} color="#FF7366" style={styles.icon} />
-        <Text style={styles.headerText}>What’s your name?</Text>
-        <Text style={styles.subText}>
+        <Icon
+          name="user"
+          size={50}
+          color={theme.colors.primary}
+          style={styles.icon}
+        />
+        <Text
+          style={[
+            styles.headerText,
+            { color: theme.colors.text, fontFamily: theme.fonts.poppins.bold },
+          ]}
+        >
+          What’s your name?
+        </Text>
+        <Text
+          style={[
+            styles.subText,
+            {
+              color: theme.colors.subText,
+              fontFamily: theme.fonts.poppins.regular,
+            },
+          ]}
+        >
           Please enter your first name. Last name is optional.
         </Text>
 
         <TextInput
-          style={[styles.input, error ? styles.inputError : null]}
+          style={[
+            styles.input,
+            error ? styles.inputError : null,
+            {
+              color: theme.colors.text,
+              borderColor: theme.colors.border,
+              backgroundColor: theme.colors.card,
+            },
+          ]}
           placeholder="First Name"
           value={firstName}
           onChangeText={(text) => {
             setFirstName(text);
             if (error) setError("");
           }}
-          placeholderTextColor="#BDBDBD"
+          placeholderTextColor={theme.colors.subText}
         />
 
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        {error ? (
+          <Text style={[styles.errorText, { color: theme.colors.primary }]}>
+            {error}
+          </Text>
+        ) : null}
 
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            {
+              color: theme.colors.text,
+              borderColor: theme.colors.border,
+              backgroundColor: theme.colors.card,
+            },
+          ]}
           placeholder="Last Name (Optional)"
           value={lastName}
           onChangeText={setLastName}
-          placeholderTextColor="#BDBDBD"
+          placeholderTextColor={theme.colors.subText}
         />
       </View>
-      <Link href="./gender" asChild>
-        <Pressable style={styles.continueButton} onPress={handleContinue}>
-          <Text style={styles.continueButtonText}>Continue</Text>
-        </Pressable>
-      </Link>
+      <Pressable
+        style={[
+          styles.continueButton,
+          { backgroundColor: theme.colors.primary },
+        ]}
+        onPress={handleContinue}
+      >
+        <Text
+          style={[
+            styles.continueButtonText,
+            {
+              color: theme.colors.buttonText,
+              fontFamily: theme.fonts.poppins.bold,
+            },
+          ]}
+        >
+          Continue
+        </Text>
+      </Pressable>
     </Pressable>
   );
 }
@@ -67,7 +129,6 @@ export default function NameInputPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#212121", // Dark background color
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 40,
@@ -83,42 +144,33 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 25,
     fontWeight: "bold",
-    color: "#FFFFFF", // Light text color for dark theme
     textAlign: "center",
     marginBottom: 10,
-    fontFamily: "Poppins-Bold",
   },
   subText: {
     fontSize: 16,
-    color: "#BDBDBD", // Light gray for subtext
     textAlign: "center",
     marginBottom: 40,
-    fontFamily: "Poppins-Regular",
   },
   input: {
     width: "100%",
     height: 50,
     fontSize: 16,
-    color: "#FFFFFF", // Light text color for inputs
     borderWidth: 1,
-    borderColor: "#4F4F4F", // Dark gray border
     textAlign: "left",
     paddingHorizontal: 10,
     borderRadius: 10,
     marginBottom: 20,
-    backgroundColor: "#424242", // Darker background for input fields
   },
   inputError: {
     borderColor: "#FF7366", // Accent color for error state
   },
   errorText: {
-    color: "#FF7366", // Accent color for error text
     fontSize: 14,
     marginBottom: 20,
     alignSelf: "flex-start",
   },
   continueButton: {
-    backgroundColor: "#FF7366", // Accent color for button
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: "center",
@@ -126,7 +178,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   continueButtonText: {
-    color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },

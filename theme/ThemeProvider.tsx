@@ -1,16 +1,32 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  ReactNode,
+} from "react";
 import { Appearance } from "react-native";
-import { lightTheme, darkTheme } from "./theme";
+import { lightTheme, darkTheme, Theme } from "./theme";
+import { DarkTheme } from "@react-navigation/native";
 
-const ThemeContext = createContext();
+// Define the shape of the context value
+type ThemeContextType = {
+  theme: Theme;
+  toggleTheme: () => void;
+};
 
-export const ThemeProvider = ({ children }) => {
+// Create the context with the proper type
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+type ThemeProviderProps = {
+  children: ReactNode;
+};
+
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const systemTheme = Appearance.getColorScheme();
-  // const [theme, setTheme] = useState(
-  // systemTheme === "dark" ? darkTheme : lightTheme
-  //);
-
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState<Theme>(
+    darkTheme // systemTheme === "dark" ? darkTheme : lightTheme
+  );
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme.dark ? lightTheme : darkTheme));
@@ -31,4 +47,11 @@ export const ThemeProvider = ({ children }) => {
   );
 };
 
-export const useTheme = () => useContext(ThemeContext);
+// Custom hook to use the ThemeContext
+export const useAppTheme = (): ThemeContextType => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error("useAppTheme must be used within a ThemeProvider");
+  }
+  return context;
+};

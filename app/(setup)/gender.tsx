@@ -8,9 +8,12 @@ import {
   Keyboard,
 } from "react-native";
 import Icon from "@expo/vector-icons/FontAwesome";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
+import { useAppTheme } from "@/theme/ThemeProvider";
 
 export default function GenderSelectionPage() {
+  const { theme } = useAppTheme();
+  const router = useRouter();
   const [selectedGender, setSelectedGender] = useState("");
 
   const handleContinue = () => {
@@ -20,14 +23,45 @@ export default function GenderSelectionPage() {
       console.log("Selected Gender:", selectedGender);
       // Handle submission logic here
     }
+
+    router.push("/gender-preference");
+  };
+
+  const getButtonTextColor = (gender) => {
+    return selectedGender === gender
+      ? theme.colors.buttonText
+      : theme.colors.text;
   };
 
   return (
-    <Pressable onPress={Keyboard.dismiss} style={styles.container}>
+    <Pressable
+      onPress={Keyboard.dismiss}
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <View style={styles.contentContainer}>
-        <Icon name="venus-mars" size={50} color="#FF7366" style={styles.icon} />
-        <Text style={styles.headerText}>Select your gender</Text>
-        <Text style={styles.subText}>
+        <Icon
+          name="venus-mars"
+          size={50}
+          color={theme.colors.primary}
+          style={styles.icon}
+        />
+        <Text
+          style={[
+            styles.headerText,
+            { color: theme.colors.text, fontFamily: theme.fonts.poppins.bold },
+          ]}
+        >
+          Select your gender
+        </Text>
+        <Text
+          style={[
+            styles.subText,
+            {
+              color: theme.colors.subText,
+              fontFamily: theme.fonts.poppins.regular,
+            },
+          ]}
+        >
           This helps us show you relevant matches.
         </Text>
 
@@ -35,14 +69,22 @@ export default function GenderSelectionPage() {
           <TouchableOpacity
             style={[
               styles.genderOption,
-              selectedGender === "Male" && styles.selectedOption,
+              {
+                backgroundColor:
+                  selectedGender === "Male"
+                    ? theme.colors.primary
+                    : theme.colors.card,
+              },
             ]}
             onPress={() => setSelectedGender("Male")}
           >
             <Text
               style={[
                 styles.genderText,
-                selectedGender === "Male" && styles.selectedGenderText,
+                {
+                  color: getButtonTextColor("Male"),
+                  fontFamily: theme.fonts.poppins.regular,
+                },
               ]}
             >
               Male
@@ -52,14 +94,22 @@ export default function GenderSelectionPage() {
           <TouchableOpacity
             style={[
               styles.genderOption,
-              selectedGender === "Female" && styles.selectedOption,
+              {
+                backgroundColor:
+                  selectedGender === "Female"
+                    ? theme.colors.primary
+                    : theme.colors.card,
+              },
             ]}
             onPress={() => setSelectedGender("Female")}
           >
             <Text
               style={[
                 styles.genderText,
-                selectedGender === "Female" && styles.selectedGenderText,
+                {
+                  color: getButtonTextColor("Female"),
+                  fontFamily: theme.fonts.poppins.regular,
+                },
               ]}
             >
               Female
@@ -69,14 +119,22 @@ export default function GenderSelectionPage() {
           <TouchableOpacity
             style={[
               styles.genderOption,
-              selectedGender === "Non-binary" && styles.selectedOption,
+              {
+                backgroundColor:
+                  selectedGender === "Non-binary"
+                    ? theme.colors.primary
+                    : theme.colors.card,
+              },
             ]}
             onPress={() => setSelectedGender("Non-binary")}
           >
             <Text
               style={[
                 styles.genderText,
-                selectedGender === "Non-binary" && styles.selectedGenderText,
+                {
+                  color: getButtonTextColor("Non-binary"),
+                  fontFamily: theme.fonts.poppins.regular,
+                },
               ]}
             >
               Non-binary
@@ -86,14 +144,22 @@ export default function GenderSelectionPage() {
           <TouchableOpacity
             style={[
               styles.genderOption,
-              selectedGender === "Other" && styles.selectedOption,
+              {
+                backgroundColor:
+                  selectedGender === "Other"
+                    ? theme.colors.primary
+                    : theme.colors.card,
+              },
             ]}
             onPress={() => setSelectedGender("Other")}
           >
             <Text
               style={[
                 styles.genderText,
-                selectedGender === "Other" && styles.selectedGenderText,
+                {
+                  color: getButtonTextColor("Other"),
+                  fontFamily: theme.fonts.poppins.regular,
+                },
               ]}
             >
               Other
@@ -103,15 +169,22 @@ export default function GenderSelectionPage() {
           <TouchableOpacity
             style={[
               styles.genderOption,
-              selectedGender === "Prefer not to say" && styles.selectedOption,
+              {
+                backgroundColor:
+                  selectedGender === "Prefer not to say"
+                    ? theme.colors.primary
+                    : theme.colors.card,
+              },
             ]}
             onPress={() => setSelectedGender("Prefer not to say")}
           >
             <Text
               style={[
                 styles.genderText,
-                selectedGender === "Prefer not to say" &&
-                  styles.selectedGenderText,
+                {
+                  color: getButtonTextColor("Prefer not to say"),
+                  fontFamily: theme.fonts.poppins.regular,
+                },
               ]}
             >
               Prefer not to say
@@ -119,11 +192,26 @@ export default function GenderSelectionPage() {
           </TouchableOpacity>
         </View>
       </View>
-      <Link href="./gender-preference" asChild>
-        <Pressable style={styles.continueButton} onPress={handleContinue}>
-          <Text style={styles.continueButtonText}>Continue</Text>
-        </Pressable>
-      </Link>
+
+      <Pressable
+        style={[
+          styles.continueButton,
+          { backgroundColor: theme.colors.primary },
+        ]}
+        onPress={handleContinue}
+      >
+        <Text
+          style={[
+            styles.continueButtonText,
+            {
+              color: theme.colors.buttonText,
+              fontFamily: theme.fonts.poppins.bold,
+            },
+          ]}
+        >
+          Continue
+        </Text>
+      </Pressable>
     </Pressable>
   );
 }
@@ -131,7 +219,6 @@ export default function GenderSelectionPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#212121", // Dark background color
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 40,
@@ -147,23 +234,18 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 25,
     fontWeight: "bold",
-    color: "#FFFFFF", // Light text color for dark theme
     textAlign: "center",
     marginBottom: 10,
-    fontFamily: "Poppins-Bold",
   },
   subText: {
     fontSize: 16,
-    color: "#BDBDBD", // Light gray for subtext
     textAlign: "center",
     marginBottom: 40,
-    fontFamily: "Poppins-Regular",
   },
   genderOptions: {
     width: "100%",
   },
   genderOption: {
-    backgroundColor: "#424242", // Darker background for options
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -172,17 +254,8 @@ const styles = StyleSheet.create({
   },
   genderText: {
     fontSize: 18,
-    color: "#FFFFFF", // Light text color for options
-    fontFamily: "Poppins-Regular",
-  },
-  selectedOption: {
-    backgroundColor: "#FF7366", // Accent color for selected option
-  },
-  selectedGenderText: {
-    color: "white",
   },
   continueButton: {
-    backgroundColor: "#FF7366", // Accent color for button
     paddingVertical: 15,
     borderRadius: 30,
     alignItems: "center",
@@ -190,9 +263,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   continueButtonText: {
-    color: "white",
     fontSize: 16,
     fontWeight: "bold",
-    fontFamily: "Poppins-Bold",
   },
 });

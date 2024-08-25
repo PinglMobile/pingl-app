@@ -1,12 +1,14 @@
+import { useAppTheme } from "@/theme/ThemeProvider";
 import React from "react";
 import { View } from "react-native";
 import * as Progress from "react-native-progress";
 
 const ProgressBar = ({ step, steps }) => {
+  const { theme } = useAppTheme();
   const progress = step / steps;
 
   return (
-    <View style={{ backgroundColor: "#212121", padding: 30 }}>
+    <View style={{ backgroundColor: theme.colors.background, padding: 30 }}>
       <Progress.Bar
         progress={progress}
         width={null}
